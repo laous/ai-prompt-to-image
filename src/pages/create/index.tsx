@@ -18,7 +18,7 @@ interface FromInputs {
 const Create = () => {
   const router = useRouter();
 
-  const trpcMutation = api.openai.generateImage.useMutation({
+  const generateImageMutation = api.openai.generateImage.useMutation({
     onSuccess: (data) => {
       setForm({
         ...form,
@@ -26,6 +26,14 @@ const Create = () => {
         photo: `data:image/jpeg;base64,${data?.photo}`,
       });
       setGeneratingImg(false);
+    },
+  });
+
+  const createPostMutation = api.post.createPost.useMutation({
+    onSuccess: async () => {
+      alert("Success");
+      await router.push("/");
+      setLoading(false);
     },
   });
 
@@ -52,7 +60,7 @@ const Create = () => {
     if (form.prompt) {
       try {
         setGeneratingImg(true);
-        trpcMutation.mutate({
+        generateImageMutation.mutate({
           prompt: form.prompt,
         });
         // console.log(response);
@@ -64,32 +72,17 @@ const Create = () => {
     }
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-
     if (form.prompt && form.photo) {
       setLoading(true);
       try {
-        const response = await fetch(
-          "https://dalle-arbb.onrender.com/api/v1/post",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ ...form }),
-          }
-        );
-
-        await response.json();
-        alert("Success");
-        await router.push("/");
+        createPostMutation.mutate({ ...form });
       } catch (err) {
         alert(err);
-      } finally {
-        setLoading(false);
       }
     } else {
+      setLoading(false);
       alert("Please generate an image with proper details");
     }
   };

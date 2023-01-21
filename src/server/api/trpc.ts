@@ -22,6 +22,7 @@ import { type Session } from "next-auth";
 import { getServerAuthSession } from "../auth";
 import { prisma } from "../db";
 import { openai } from "../../utils/openai";
+import cloudinary from "../../utils/cloudinary";
 
 type CreateContextOptions = {
   session: Session | null;
@@ -41,6 +42,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
     session: opts.session,
     prisma,
     openai,
+    cloudinary,
   };
 };
 
