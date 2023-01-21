@@ -7,6 +7,7 @@ import Loader from "../../components/Loader";
 import preview from "../../assets/preview.png";
 import Head from "next/head";
 import { getRandomPrompt } from "../../utils/helpers";
+import { api } from "../../utils/api";
 
 interface FromInputs {
   name: string;
@@ -17,6 +18,17 @@ interface FromInputs {
 const Create = () => {
   const router = useRouter();
 
+  const trpcMutation = api.openai.generateImage.useMutation({
+    onSuccess: (data) => {
+      setForm({
+        ...form,
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
+        photo: `data:image/jpeg;base64,${data?.photo}`,
+      });
+      setGeneratingImg(false);
+    },
+  });
+
   const [form, setForm] = useState<FromInputs>({
     name: "",
     prompt: "",
@@ -26,38 +38,26 @@ const Create = () => {
   const [generatingImg, setGeneratingImg] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: FormEvent) =>
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    setForm({ ...form, [e?.target.name]: e?.target.value });
+  const handleChange = (e: FormEvent) => {
+    const target = e.target as HTMLInputElement;
+    setForm({ ...form, [target.name]: target.value });
+  };
 
   const handleSurpriseMe = () => {
     const randomPrompt: string = getRandomPrompt(form.prompt);
     setForm({ ...form, prompt: randomPrompt });
   };
 
-  const generateImage = async () => {
+  const generateImage = () => {
     if (form.prompt) {
       try {
         setGeneratingImg(true);
-        const response = await fetch(
-          "https://dalle-arbb.onrender.com/api/v1/dalle",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              prompt: form.prompt,
-            }),
-          }
-        );
-
-        const data = await response.json();
-        setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
+        trpcMutation.mutate({
+          prompt: form.prompt,
+        });
+        // console.log(response);
       } catch (err) {
-        alert(err);
-      } finally {
-        setGeneratingImg(false);
+        console.log(err);
       }
     } else {
       alert("Please provide proper prompt");
@@ -108,6 +108,7 @@ const Create = () => {
           </p>
         </div>
 
+        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises*/}
         <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-5">
             <FormField
@@ -132,7 +133,8 @@ const Create = () => {
 
             <div className="relative flex h-64 w-64 items-center justify-center rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500">
               {form.photo ? (
-                <Image
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
                   src={form.photo}
                   alt={form.prompt}
                   className="h-full w-full object-contain"

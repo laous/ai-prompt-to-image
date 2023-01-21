@@ -1,5 +1,4 @@
 import { TRPCError } from "@trpc/server";
-import Error from "next/error";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
@@ -7,7 +6,7 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 export const openaiRouter = createTRPCRouter({
   generateImage: publicProcedure
     .input(z.object({ prompt: z.string() }))
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       try {
         const { openai } = ctx;
         const { prompt } = input;
@@ -17,8 +16,10 @@ export const openaiRouter = createTRPCRouter({
           size: "1024x1024",
           response_format: "b64_json",
         });
-        const photo = response.data.data[0].b64_json;
+        // console.log("TRPC Response from OpenAI: ", response.data);
+        const photo = response?.data?.data[0]?.b64_json;
         return { photo };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         throw new TRPCError({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
