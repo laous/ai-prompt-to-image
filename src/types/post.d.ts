@@ -1,5 +1,5 @@
 export interface PostType {
-  _id?: string;
+  id?: string;
   name: string;
   prompt: string;
   photo: string;

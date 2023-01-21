@@ -1,5 +1,3 @@
-"use client";
-
 const Loader = () => (
   <div role="status">
     <svg

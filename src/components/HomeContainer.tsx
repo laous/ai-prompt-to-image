@@ -1,17 +1,36 @@
+import type { FormEvent } from "react";
 import { useState, useEffect } from "react";
 import type { PostType } from "../types/post";
+import { api } from "../utils/api";
 import Card from "./Card";
 import FormField from "./FormField";
 import Loader from "./Loader";
 
 const HomeContainer = () => {
-  const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<PostType[]>([]); // or whatever type you need
-  const [searchText, setSearchText] = useState<string>("abc");
+  const [searchText, setSearchText] = useState<string>("");
+  const [searchedResults, setSearchedResults] = useState<PostType[]>([]);
+  const { isLoading, data } = api.post.getAllPosts.useQuery();
 
   useEffect(() => {
-    setLoading(false);
-  }, []);
+    if (data) {
+      setPosts(data);
+      console.log("data", data);
+    }
+  }, [isLoading, data]);
+
+  const handleSearchChange = (e: FormEvent) => {
+    const target = e?.target as HTMLInputElement;
+    setSearchText(target?.value);
+
+    const searchResult = posts.filter(
+      (item) =>
+        item.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.prompt.toLowerCase().includes(searchText.toLowerCase())
+    );
+
+    setSearchedResults(searchResult);
+  };
 
   return (
     <section className="mx-auto max-w-7xl ">
@@ -25,10 +44,17 @@ const HomeContainer = () => {
         </p>
       </div>
       <div className="mt-16">
-        <FormField />
+        <FormField
+          labelName="Search posts"
+          type="text"
+          name="text"
+          placeholder="Search something..."
+          value={searchText}
+          handleChange={handleSearchChange}
+        />
       </div>
       <div className="mt-10">
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center">
             <Loader />
           </div>
@@ -43,9 +69,9 @@ const HomeContainer = () => {
           </>
         )}
       </div>
-      <div className="grid grid-cols-1 gap-3 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 xs:grid-cols-2 sm:grid-cols-4">
         {searchText ? (
-          <RenderCards data={posts} errorMessage="No results found" />
+          <RenderCards data={searchedResults} errorMessage="No results found" />
         ) : (
           <RenderCards data={posts} errorMessage="No results found" />
         )}
@@ -66,7 +92,7 @@ const RenderCards = ({
     return (
       <>
         {data.map((item) => {
-          return <Card key={item._id} {...item} />;
+          return <Card key={item.id} {...item} />;
         })}
       </>
     );
