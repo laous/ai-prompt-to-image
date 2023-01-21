@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
-export const exampleRouter = createTRPCRouter({
+export const postRouter = createTRPCRouter({
   createPost: protectedProcedure
     .input(
       z.object({ name: z.string(), prompt: z.string(), photo: z.string() })
