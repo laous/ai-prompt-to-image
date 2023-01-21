@@ -1,16 +1,12 @@
 import { useState, useEffect } from "react";
+import type { PostType } from "../types/post";
 import Card from "./Card";
 import FormField from "./FormField";
 import Loader from "./Loader";
 
-interface Post {
-  id: number;
-  prompt: string;
-}
-
 const HomeContainer = () => {
   const [loading, setLoading] = useState(true);
-  const [posts, setPosts] = useState<Post[]>([]); // or whatever type you need
+  const [posts, setPosts] = useState<PostType[]>([]); // or whatever type you need
   const [searchText, setSearchText] = useState<string>("abc");
 
   useEffect(() => {
@@ -63,13 +59,17 @@ const RenderCards = ({
   data,
   errorMessage,
 }: {
-  data: Post[];
+  data: PostType[];
   errorMessage: string;
 }) => {
   if (data?.length > 0) {
-    data.map((item) => {
-      return <Card key={item.id} {...item} />;
-    });
+    return (
+      <>
+        {data.map((item) => {
+          return <Card key={item._id} {...item} />;
+        })}
+      </>
+    );
   }
   return (
     <h2 className="mt-5 text-xl font-bold uppercase text-[#6449ff]">
