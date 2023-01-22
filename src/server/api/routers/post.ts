@@ -1,15 +1,15 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const postRouter = createTRPCRouter({
-  createPost: publicProcedure
+  createPost: protectedProcedure
     .input(
       z.object({ name: z.string(), prompt: z.string(), photo: z.string() })
     )
     .mutation(async ({ ctx, input }) => {
-      const { prisma, cloudinary } = ctx;
+      const { prisma, cloudinary, session } = ctx;
       let photoURL;
       try {
         photoURL = await cloudinary.uploader.upload(input.photo);
@@ -21,9 +21,14 @@ export const postRouter = createTRPCRouter({
       }
       const post = await prisma.post.create({
         data: {
-          name: input.name,
+          name: session?.user?.name || session.user.id,
           prompt: input.prompt,
           photo: photoURL.url,
+          User: {
+            connect: {
+              id: session.user.id,
+            },
+          },
         },
       });
       if (!post) {

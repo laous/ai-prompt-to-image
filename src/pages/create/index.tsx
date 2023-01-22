@@ -17,7 +17,9 @@ interface FromInputs {
 }
 
 const Create = () => {
-  const { status } = useSession();
+  const { data, status } = useSession();
+  console.log("Session data: ", data);
+  const currentUser = data?.user;
 
   const router = useRouter();
 
@@ -116,14 +118,26 @@ const Create = () => {
         {/* eslint-disable-next-line @typescript-eslint/no-misused-promises*/}
         <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-5">
-            <FormField
-              labelName="Your Name"
-              type="text"
-              name="name"
-              placeholder="Ex., john doe"
-              value={form.name}
-              handleChange={handleChange}
-            />
+            <div>
+              <label
+                htmlFor="success"
+                className="mb-2 block text-sm font-medium text-gray-900"
+              >
+                Your name
+              </label>
+              <input
+                type="text"
+                id="success"
+                className="block w-full cursor-not-allowed rounded-lg border border-green-600 bg-green-50 p-2.5 text-sm text-green-600 placeholder-green-700 focus:border-green-500 focus:ring-green-500"
+                defaultValue={String(currentUser?.name)}
+                disabled={true}
+              />
+              <p className="mt-2 text-center text-sm text-green-600 dark:text-green-500">
+                <span className="font-medium">
+                  Name used in your GitHub account.
+                </span>
+              </p>
+            </div>
 
             <FormField
               labelName="Prompt"
