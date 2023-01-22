@@ -15,37 +15,41 @@ datasource db {
 }
 
 model Post {
-    id     String  @id @default(auto()) @map("_id") @db.ObjectId
-    name   String
-    prompt String
-    photo  String
-    User   User?   @relation(fields: [userId], references: [id])
-    userId String? @db.ObjectId
+    id        String    @id @default(auto()) @map("_id") @db.ObjectId
+    name      String    @db.String
+    prompt    String    @db.String
+    photo     String    @db.String
+    User      User?     @relation(fields: [userId], references: [id])
+    userId    String?   @db.ObjectId
+    createdAt DateTime? @default(now())
+    updatedAt DateTime? @updatedAt
 }
 
 // Necessary for Next auth
 model Account {
-    id                       String  @id @default(auto()) @map("_id") @db.ObjectId
-    userId                   String  @db.ObjectId
-    type                     String
-    provider                 String
-    providerAccountId        String
-    refresh_token            String? @db.String
-    access_token             String? @db.String
+    id                       String    @id @default(auto()) @map("_id") @db.ObjectId
+    userId                   String    @db.ObjectId
+    type                     String    @db.String
+    provider                 String    @db.String
+    providerAccountId        String    @db.String
+    refresh_token            String?   @db.String
+    access_token             String?   @db.String
     expires_at               Int?
-    token_type               String?
-    scope                    String?
-    id_token                 String? @db.String
-    session_state            String?
-    refresh_token_expires_in String?
-    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    token_type               String?   @db.String
+    scope                    String?   @db.String
+    id_token                 String?   @db.String
+    session_state            String?   @db.String
+    refresh_token_expires_in Int?
+    user                     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt                DateTime? @default(now())
+    updatedAt                DateTime? @updatedAt
 
     @@unique([provider, providerAccountId])
 }
 
 model Session {
     id           String   @id @default(auto()) @map("_id") @db.ObjectId
-    sessionToken String   @unique
+    sessionToken String   @unique @db.String
     userId       String   @db.ObjectId
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -53,10 +57,12 @@ model Session {
 
 model User {
     id            String    @id @default(auto()) @map("_id") @db.ObjectId
-    name          String?
-    email         String?   @unique
+    name          String?   @db.String
+    email         String?   @unique @db.String
     emailVerified DateTime?
-    image         String?
+    image         String?   @db.String
+    createdAt     DateTime? @default(now())
+    updatedAt     DateTime? @updatedAt
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
@@ -64,7 +70,7 @@ model User {
 
 model VerificationToken {
     id         String   @id @default(auto()) @map("_id") @db.ObjectId
-    identifier String
+    identifier String   @db.String
     token      String   @unique
     expires    DateTime
 
