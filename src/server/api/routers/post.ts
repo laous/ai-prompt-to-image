@@ -41,6 +41,21 @@ export const postRouter = createTRPCRouter({
     }),
   getAllPosts: publicProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
-    return await prisma.post.findMany();
+    return await prisma.post.findMany({
+      select: {
+        id: true,
+        prompt: true,
+        photo: true,
+        createdAt: true,
+        updatedAt: true,
+        User: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+      },
+    });
   }),
 });

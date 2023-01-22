@@ -15,7 +15,7 @@ const HomeContainer = () => {
   useEffect(() => {
     if (data) {
       setPosts(data);
-      console.log("data", data);
+      // console.log("data", data);
     }
   }, [isLoading, data]);
 
@@ -23,10 +23,8 @@ const HomeContainer = () => {
     const target = e?.target as HTMLInputElement;
     setSearchText(target?.value);
 
-    const searchResult = posts.filter(
-      (item) =>
-        item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.prompt.toLowerCase().includes(searchText.toLowerCase())
+    const searchResult = posts.filter((item) =>
+      item.prompt.toLowerCase().includes(searchText.toLowerCase())
     );
 
     setSearchedResults(searchResult);

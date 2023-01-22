@@ -18,7 +18,7 @@ interface FromInputs {
 
 const Create = () => {
   const { data, status } = useSession();
-  console.log("Session data: ", data);
+  // console.log("Session data: ", data);
   const currentUser = data?.user;
 
   const router = useRouter();
