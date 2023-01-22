@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 
 const AuthShowcase = () => {
-  const { data: sessionData } = useSession();
+  const { data: sessionData, status } = useSession();
 
   return (
     <div className="hidden items-center justify-end sm:flex md:flex-1 lg:w-0">
@@ -23,12 +23,14 @@ const AuthShowcase = () => {
           </Link>
         </>
       ) : (
-        <button
-          className=" inline-flex items-center justify-center whitespace-nowrap rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-          onClick={() => void signIn()}
-        >
-          Sign in
-        </button>
+        status === "unauthenticated" && (
+          <button
+            className=" inline-flex items-center justify-center whitespace-nowrap rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+            onClick={() => void signIn()}
+          >
+            Sign in
+          </button>
+        )
       )}
     </div>
   );

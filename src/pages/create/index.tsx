@@ -8,6 +8,7 @@ import preview from "../../assets/preview.png";
 import Head from "next/head";
 import { getRandomPrompt } from "../../utils/helpers";
 import { api } from "../../utils/api";
+import { useSession } from "next-auth/react";
 
 interface FromInputs {
   name: string;
@@ -16,6 +17,8 @@ interface FromInputs {
 }
 
 const Create = () => {
+  const { status } = useSession();
+
   const router = useRouter();
 
   const generateImageMutation = api.openai.generateImage.useMutation({
@@ -86,6 +89,15 @@ const Create = () => {
       alert("Please generate an image with proper details");
     }
   };
+
+  if (status === "loading") {
+    return <Loader />;
+  }
+
+  if (status === "unauthenticated") {
+    void (async () => await router.push("/"))();
+    return;
+  }
 
   return (
     <>
