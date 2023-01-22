@@ -68,11 +68,15 @@ const HomeContainer = () => {
         )}
       </div>
       <div className="grid grid-cols-1 gap-3 xs:grid-cols-2 sm:grid-cols-4">
-        {searchText ? (
-          <RenderCards data={searchedResults} errorMessage="No results found" />
-        ) : (
-          <RenderCards data={posts} errorMessage="No results found" />
-        )}
+        {!isLoading &&
+          (searchText ? (
+            <RenderCards
+              data={searchedResults}
+              errorMessage="No results found"
+            />
+          ) : (
+            <RenderCards data={posts} errorMessage="No results found" />
+          ))}
       </div>
     </section>
   );

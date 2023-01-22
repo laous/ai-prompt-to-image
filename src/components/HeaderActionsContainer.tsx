@@ -2,11 +2,11 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 
-const AuthShowcase = () => {
+const HeaderActionsContainer = () => {
   const { data: sessionData, status } = useSession();
 
   return (
-    <div className="hidden items-center justify-end sm:flex md:flex-1 lg:w-0">
+    <div className="flex items-center justify-end md:flex-1 lg:w-0">
       {sessionData ? (
         <>
           <button
@@ -36,4 +36,4 @@ const AuthShowcase = () => {
   );
 };
 
-export default AuthShowcase;
+export default HeaderActionsContainer;

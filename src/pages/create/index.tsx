@@ -11,7 +11,6 @@ import { api } from "../../utils/api";
 import { useSession } from "next-auth/react";
 
 interface FromInputs {
-  name: string;
   prompt: string;
   photo: string;
 }
@@ -43,13 +42,13 @@ const Create = () => {
   });
 
   const [form, setForm] = useState<FromInputs>({
-    name: "",
     prompt: "",
     photo: "",
   });
 
   const [generatingImg, setGeneratingImg] = useState(false);
   const [loading, setLoading] = useState(false);
+  const buttonDisabled = loading || generatingImg;
 
   const handleChange = (e: FormEvent) => {
     const target = e.target as HTMLInputElement;
@@ -91,6 +90,8 @@ const Create = () => {
       alert("Please generate an image with proper details");
     }
   };
+
+  const disabledTailwindClass = "cursor-not-allowed opacity-30";
 
   if (status === "loading") {
     return <Loader />;
@@ -177,8 +178,11 @@ const Create = () => {
           <div className="mt-5 flex gap-5">
             <button
               type="button"
+              disabled={buttonDisabled}
               onClick={generateImage}
-              className=" w-full rounded-md bg-green-700 px-5 py-2.5 text-center text-sm font-medium text-white sm:w-auto"
+              className={` w-full rounded-md bg-green-800 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-green-900 sm:w-auto ${
+                buttonDisabled ? disabledTailwindClass : ""
+              }`}
             >
               {generatingImg ? "Generating..." : "Generate"}
             </button>
@@ -190,8 +194,11 @@ const Create = () => {
               others in the community **
             </p>
             <button
+              disabled={buttonDisabled}
               type="submit"
-              className="mt-3 w-full rounded-md bg-[#6469ff] px-5 py-2.5 text-center text-sm font-medium text-white sm:w-auto"
+              className={`mt-3 w-full rounded-md bg-indigo-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-indigo-700 sm:w-auto ${
+                buttonDisabled ? disabledTailwindClass : ""
+              }}`}
             >
               {loading ? "Sharing..." : "Share with the Community"}
             </button>

@@ -5,9 +5,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const postRouter = createTRPCRouter({
   createPost: protectedProcedure
-    .input(
-      z.object({ name: z.string(), prompt: z.string(), photo: z.string() })
-    )
+    .input(z.object({ prompt: z.string(), photo: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { prisma, cloudinary, session } = ctx;
       let photoURL;
