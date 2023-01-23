@@ -10,6 +10,9 @@ import { getRandomPrompt } from "../../utils/helpers";
 import { api } from "../../utils/api";
 import { useSession } from "next-auth/react";
 import OptionsFileds from "../../components/inputs/OptionsFileds";
+import { authOptions } from "../api/auth/[...nextauth]";
+import { unstable_getServerSession } from "next-auth";
+import type { GetServerSidePropsContext } from "next";
 
 interface FormInputs {
   prompt: string;
@@ -116,8 +119,8 @@ const Create = () => {
         <div>
           <h1 className="text-[32px] font-extrabold text-[#222328]">Create</h1>
           <p className="mt-2 max-w-[500px] text-[14px] text-[#666e75]">
-            Generate an imaginative image through DALL-E AI and share it with
-            the community
+            Generate an imaginative image through OpenAI and share it with the
+            community!
           </p>
         </div>
 
@@ -215,3 +218,24 @@ const Create = () => {
   );
 };
 export default Create;
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  );
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+}
