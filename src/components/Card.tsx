@@ -3,8 +3,10 @@ import Image from "next/image";
 import type { PostType } from "../types/post";
 import { downloadImage } from "../utils/helpers";
 import download from "../assets/download.png";
+import { useState } from "react";
 
 const Card = ({ id, User, prompt, photo, createdAt }: PostType) => {
+  const [imageIslazy, setImageIslazy] = useState<boolean>(true);
   const getPostDate = (createdAt: Date) => {
     const today = new Date();
     if (
@@ -25,10 +27,17 @@ const Card = ({ id, User, prompt, photo, createdAt }: PostType) => {
   };
   return (
     <div className="card group relative rounded-xl shadow-card hover:shadow-cardhover">
-      <img
-        className="h-auto w-full rounded-xl  object-cover"
+      <Image
+        className={`h-auto w-full rounded-xl object-cover duration-300 ease-out ${
+          imageIslazy
+            ? "scale-75 blur-xl grayscale"
+            : "scale-100 blur-0 grayscale-0"
+        }`}
         src={photo}
         alt={prompt}
+        width={400}
+        height={400}
+        onLoadingComplete={() => setImageIslazy(false)}
       />
       <div className="absolute bottom-0 left-0 right-0 m-2 hidden max-h-[94.5%] flex-col rounded-md bg-[#10131f] p-4 group-hover:flex">
         <p className="prompt overflow-y-auto text-sm text-white">{prompt}</p>
