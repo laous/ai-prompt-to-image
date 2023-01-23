@@ -3,11 +3,10 @@ import { useState, useEffect } from "react";
 import type { PostType } from "../types/post";
 import { api } from "../utils/api";
 import Card from "./Card";
-import FormField from "./FormField";
 import Loader from "./Loader";
 
 const HomeContainer = () => {
-  const [posts, setPosts] = useState<PostType[]>([]); // or whatever type you need
+  const [posts, setPosts] = useState<PostType[]>([]);
   const [searchText, setSearchText] = useState<string>("");
   const [searchedResults, setSearchedResults] = useState<PostType[]>([]);
   const { isLoading, data } = api.post.getAllPosts.useQuery();
@@ -42,14 +41,26 @@ const HomeContainer = () => {
         </p>
       </div>
       <div className="mt-16">
-        <FormField
-          labelName="Search posts"
-          type="text"
-          name="text"
-          placeholder="Search something..."
-          value={searchText}
-          handleChange={handleSearchChange}
-        />
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="search-query"
+              className="block text-sm font-medium text-gray-900"
+            >
+              Search posts
+            </label>
+          </div>
+          <input
+            type="text"
+            id="search-query"
+            name="search-query"
+            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 outline-none focus:border-[#6469ff] focus:ring-[#6469ff]"
+            placeholder="Search something.."
+            value={searchText}
+            onChange={handleSearchChange}
+            required
+          />
+        </div>
       </div>
       <div className="mt-10">
         {isLoading ? (
