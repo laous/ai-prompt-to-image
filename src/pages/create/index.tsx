@@ -2,17 +2,19 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import type { FormEvent } from "react";
 import { useState } from "react";
-import FormField from "../../components/FormField";
+import PromptInputField from "../../components/inputs/PromptInputField";
 import Loader from "../../components/Loader";
 import preview from "../../assets/preview.png";
 import Head from "next/head";
 import { getRandomPrompt } from "../../utils/helpers";
 import { api } from "../../utils/api";
 import { useSession } from "next-auth/react";
+import OptionsFileds from "../../components/inputs/OptionsFileds";
 
-interface FromInputs {
+interface FormInputs {
   prompt: string;
   photo: string;
+  size: "1024x1024" | "512x512" | "256x256";
 }
 
 const Create = () => {
@@ -41,9 +43,10 @@ const Create = () => {
     },
   });
 
-  const [form, setForm] = useState<FromInputs>({
+  const [form, setForm] = useState<FormInputs>({
     prompt: "",
     photo: "",
+    size: "256x256",
   });
 
   const [generatingImg, setGeneratingImg] = useState(false);
@@ -51,8 +54,8 @@ const Create = () => {
   const buttonDisabled = loading || generatingImg;
 
   const handleChange = (e: FormEvent) => {
-    const target = e.target as HTMLInputElement;
-    setForm({ ...form, [target.name]: target.value });
+    const target = e.target as HTMLInputElement | HTMLSelectElement;
+    setForm((state) => ({ ...state, [target.name]: target.value }));
   };
 
   const handleSurpriseMe = () => {
@@ -66,6 +69,8 @@ const Create = () => {
         setGeneratingImg(true);
         generateImageMutation.mutate({
           prompt: form.prompt,
+          size: form.size,
+          num_results: 1,
         });
         // console.log(response);
       } catch (err) {
@@ -117,39 +122,40 @@ const Create = () => {
         </div>
 
         {/* eslint-disable-next-line @typescript-eslint/no-misused-promises*/}
-        <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
+        <form
+          className="mt-16 max-w-3xl"
+          onSubmit={handleSubmit}
+          name="create-post"
+          id="create-post"
+        >
           <div className="flex flex-col gap-5">
-            <div>
+            <div className="flex flex-col gap-2">
               <label
-                htmlFor="success"
-                className="mb-2 block text-sm font-medium text-gray-900"
+                htmlFor="name"
+                className="lock text-sm font-medium text-gray-900"
               >
                 Your name
               </label>
               <input
                 type="text"
-                id="success"
-                className="block w-full cursor-not-allowed rounded-lg border border-green-600 bg-green-50 p-2.5 text-sm text-green-600 placeholder-green-700 focus:border-green-500 focus:ring-green-500"
+                id="name"
+                className="block w-full cursor-not-allowed rounded-lg border border-green-600 bg-green-50 p-2.5 text-sm text-green-600 placeholder-green-700 hover:border-pink-700 hover:text-pink-700 hover:ring-pink-700"
                 defaultValue={String(currentUser?.name)}
                 disabled={true}
               />
-              <p className="mt-2 text-center text-sm text-green-600 dark:text-green-500">
+              <p className=" text-center text-xs text-gray-800">
                 <span className="font-medium">
                   Name used in your GitHub account.
                 </span>
               </p>
             </div>
 
-            <FormField
-              labelName="Prompt"
-              type="text"
-              name="prompt"
-              placeholder="An Impressionist oil painting of sunflowers in a purple vase…"
+            <PromptInputField
               value={form.prompt}
               handleChange={handleChange}
-              isSurpriseMe
               handleSurpriseMe={handleSurpriseMe}
             />
+            <OptionsFileds handleChange={handleChange} />
 
             <div className="relative flex h-64 w-64 items-center justify-center rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500">
               {form.photo ? (

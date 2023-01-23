@@ -1,19 +1,25 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const openaiRouter = createTRPCRouter({
-  generateImage: publicProcedure
-    .input(z.object({ prompt: z.string() }))
+  generateImage: protectedProcedure
+    .input(
+      z.object({
+        prompt: z.string(),
+        size: z.enum(["1024x1024", "512x512", "256x256"]),
+        num_results: z.number().int().min(1).max(10),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         const { openai } = ctx;
-        const { prompt } = input;
+        const { prompt, size, num_results } = input;
         const response = await openai.createImage({
           prompt: prompt,
-          n: 1,
-          size: "1024x1024",
+          n: num_results || 1,
+          size: size || "256x256",
           response_format: "b64_json",
         });
         // console.log("TRPC Response from OpenAI: ", response.data);
