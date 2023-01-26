@@ -1,8 +1,8 @@
 # IntelliPic
 
-Web application to generte an image from a prompt using AI, powered by Next.js and OpenAI.__
-[Live Demo](https://ai-prompt-to-images.vercel.app/)
+Web application to generte an image from a prompt using AI, powered by Next.js and OpenAI.
 
+[Live Demo](https://ai-prompt-to-images.vercel.app/)
 
 ## Web application built using the t3-stack.
 
@@ -15,7 +15,6 @@ Web application to generte an image from a prompt using AI, powered by Next.js a
 - [OpenAi](https://openai.com/)
 - [Cloudinary](https://cloudinary.com/)
 
-
 ## Author
-[Oussama Lamnaouer[@laous]](https://linkedin.com/in/oussamalm)
 
+[Oussama Lamnaouer[@laous]](https://linkedin.com/in/oussamalm)
